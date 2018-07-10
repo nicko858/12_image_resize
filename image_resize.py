@@ -17,12 +17,11 @@ def check_image(source_file):
         return source_file
 
 
-def check_positive(value):
-    ivalue = int(value)
-    if ivalue <= 0:
-        raise ArgumentTypeError("{} is an invalid value! "
-                                "It must be positive!".format(value))
-    return ivalue
+def check_positive(arg):
+    if int(arg) <= 0:
+        raise ArgumentTypeError("Value {} is invalid!\n"
+                                "It must be positive!".format(arg))
+    return arg
 
 
 def check_optional_args(width=None, height=None, scale=None):
@@ -118,7 +117,7 @@ def get_max_size(path_to_original,
     elif height:
         max_size = (original_width, height)
     elif scale:
-        max_size = tuple([scale * i for i in
+        max_size = tuple([scale * size for size in
                           (original_width, original_height)])
     return max_size
 
