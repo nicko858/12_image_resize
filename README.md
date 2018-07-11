@@ -3,15 +3,18 @@
 The program is represented by the module ```image_resize.py```.
 Module ```image_resize.py``` contains the following functions:
 
-- ```check_image()```
-- ```check_optional_args()```
+- ```check_image_file_exists()```
 - ```check_output_path()```
 - ```check_positive()```
+- ```close_image()```
 - ```get_args()```
-- ```get_img_file_size()```
-- ```get_max_size()```
 - ```get_output_file_path()```
+- ```get_sides_size()```
+- ```make_args_for_resize()```
+- ```open_image()```
 - ```resize_image()```
+- ```save_resize_image()```
+- ```validate_optional_args()```
 
 **The program uses these standart and third-party libraries:**
 

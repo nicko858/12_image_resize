@@ -1,40 +1,45 @@
 from PIL import Image
 import argparse
 from argparse import ArgumentTypeError
-from os.path import (exists, isfile,
+from os.path import (exists, isfile, join,
                      basename, splitext, dirname, isdir)
 
 
-def check_image(source_file):
-    if not exists(source_file):
+def check_image_file_exists(path_to_source_file):
+    if not exists(path_to_source_file):
         msg_exist = ("No such file or directory"
-                     " - '{}' !".format(source_file))
+                     " - '{}' !".format(path_to_source_file))
         raise ArgumentTypeError(msg_exist)
-    elif not isfile(source_file):
-        msg_isdir = "'{}' is not a file".format(source_file)
+    elif not isfile(path_to_source_file):
+        msg_isdir = "'{}' is not a file".format(path_to_source_file)
         raise ArgumentTypeError(msg_isdir)
     else:
-        return source_file
+        return path_to_source_file
 
 
 def check_positive(arg):
     if int(arg) <= 0:
-        raise ArgumentTypeError("Value {} is invalid!\n"
-                                "It must be positive!".format(arg))
-    return arg
+        return False
+    return True
 
 
-def check_optional_args(width=None, height=None, scale=None):
-    msg_error = ("You can not specify scale with height or width "
-                 "the same time! ")
-    if scale:
+def validate_optional_args(width=None, height=None, scale=None):
+    msg_negative = "Value {} is invalid!\nIt must be positive!"
+    if scale is not None:
         if width or height:
-            return msg_error
-    return "Ok"
+            return("You can not specify scale with height or width "
+                   "the same time! ")
+        elif not check_positive(scale):
+            return msg_negative.format(scale)
+    for parameter in (width, height):
+        if parameter:
+            if not check_positive(parameter):
+                return msg_negative.format(parameter)
+    return True
 
 
 def check_output_path(output):
-    output_dir = dirname(output)
+    output_dir = output
     if not exists(output_dir):
         msg_exist = ("No such file or directory - "
                      "'{}' !".format(output_dir))
@@ -47,35 +52,25 @@ def check_output_path(output):
 
 
 def get_args():
-    script_usage = """python image_resize.py 
-                       Mandatory parameter:
-                       -source_image <path to source image>
-    
-                       Optional parameters:
-                       -width <value>
-                       -height <value>
-                       -scale <value>
-                       -output <path to resize file>"""
     parser = argparse.ArgumentParser(
-        description="How to run image_resize.py:",
-        usage=script_usage
+        description="How to run image_resize.py:"
     )
     parser.add_argument(
-        "source_image",
-        type=check_image
+        "path_to_source_image",
+        type=check_image_file_exists
     )
 
     parser.add_argument(
         "-width",
-        type=check_positive
+        type=int
     )
     parser.add_argument(
         "-height",
-        type=check_positive
+        type=int
     )
     parser.add_argument(
         "-scale",
-        type=check_positive
+        type=float
     )
     parser.add_argument(
         "-output",
@@ -86,79 +81,111 @@ def get_args():
     return args
 
 
-def get_img_file_size(source_image):
-    with Image.open(source_image) as im:
-        width, height = im.size
-    return width, height
+def open_image(path_to_source_image):
+    image = Image.open(path_to_source_image)
+    return image
 
 
-def get_output_file_path(source_image, size, output=None):
+def close_image(image):
+    image.close()
+
+
+def get_output_file_path(path_to_source_image, size, output=None):
     width, height = size
-    source_file_name = basename(source_image)
+    source_file_name = basename(path_to_source_image)
     file_name, file_extension = splitext(source_file_name)
-    output_file_name = "{}__{}x{}{}".format(file_name,
-                                            width,
-                                            height,
-                                            file_extension)
+    output_file_name = "{}__{}x{}{}".format(
+        file_name,
+        width,
+        height,
+        file_extension
+    )
     if output:
-        return "{}/{}".format(output, output_file_name)
-    return "{}/{}".format(dirname(source_image), output_file_name)
+        return join(output, output_file_name)
+    return join(dirname(path_to_source_image), output_file_name)
 
 
-def get_max_size(path_to_original,
-                 width=None,
-                 height=None):
-    original_width, original_height = get_img_file_size(path_to_original)
-    max_size = ()
+def get_sides_size(
+        image,
+        width=None,
+        height=None,
+        scale=None
+):
+    original_width, original_height = image.size
     if width and height:
-        max_size = (width, height)
+        sides_size = (width, height)
     elif width:
-        max_size = (width, original_height)
+        height = int(round(original_height/(original_width/width)))
+        sides_size = (width, height)
     elif height:
-        max_size = (original_width, height)
+        width = int(round(original_width/(original_height/height)))
+        sides_size = (width, height)
     elif scale:
-        max_size = tuple([scale * size for size in
-                          (original_width, original_height)])
-    return max_size
+        sides_size = tuple([int(round(scale * size)) for size in
+                           (original_width, original_height)])
+    else:
+        return False
+    return sides_size
 
 
-def resize_image(path_to_original,
-                 output_image_path=None,
-                 width=None,
-                 height=None,
-                 scale=None):
-    max_size = get_max_size(path_to_original, width, height)
-    with Image.open(path_to_original) as original_image:
-        if scale or (width and height):
-            resized_image = original_image.resize(max_size)
-            image = resized_image
-        else:
-            original_image.thumbnail(max_size, Image.ANTIALIAS)
-            image = original_image
-        output = get_output_file_path(path_to_original,
-                                      image.size,
-                                      output_image_path)
-        image.save(output)
+def make_args_for_resize(
+        path_to_source_image,
+        output_image_path=None,
+        width=None,
+        height=None,
+        scale=None
+    ):
+    original_image = open_image(path_to_source_image)
+    sides_size = get_sides_size(original_image, width, height, scale)
+    if not sides_size:
+        return False
+    output = get_output_file_path(
+        path_to_source_image,
+        sides_size,
+        output_image_path
+    )
+    return original_image, sides_size, output
+
+
+def resize_image(image, sides_size):
+    resized_image = image.resize(sides_size)
+    close_image(image)
+    return resized_image
+
+
+def save_resize_image(image, output):
+    image.save(output)
     return output
 
 
 if __name__ == "__main__":
     args = get_args()
-    source_image = args.source_image
+    path_to_source_image = args.path_to_source_image
     width = args.width
     height = args.height
     scale = args.scale
     output = args.output
-    validate_args = check_optional_args(width, height, scale)
-    if validate_args is not "Ok":
+    validate_args = validate_optional_args(width, height, scale)
+    if validate_args is not True:
         exit(validate_args)
+    if width and height:
+        print("You have specified width and height."
+              " The aspect ratio will be changed!")
     try:
-        result_image = resize_image(source_image,
-                                    output,
-                                    width,
-                                    height,
-                                    scale)
-        print("Ok! The new file - '{}'!".format(result_image))
+        original_image, sides_size, path_to_resize = make_args_for_resize(
+            path_to_source_image,
+            output,
+            width,
+            height,
+            scale
+        )
+        new_image = resize_image(original_image, sides_size)
+        save_resize_image(new_image, path_to_resize)
+        if not sides_size:
+            exit("You didn't specify any parameters!\n"
+                 "Run {} -h to read script usage.".format(__file__))
+
+        print("Ok! The new file - '{}'".format(path_to_resize))
     except PermissionError:
         exit("You don't have permission to save into the"
              " '{}' directory".format(output))
