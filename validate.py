@@ -31,14 +31,14 @@ def validate_optional_args(width=None, height=None, scale=None):
     if scale is not None:
         if width or height:
             raise ValueError("You can not specify scale with "
-                              "height or width the same time! ")
+                             "height or width the same time! ")
     elif width and height:
         print("You have specified width and height."
               "The aspect ratio will be changed!")
     if not width and not height and not scale:
         raise ValueError("You didn't specify "
-                          "any optional parameter!\n"
-                          "Run image_resize.py -h to read script usage.")
+                         "any optional parameter!\n"
+                         "Run image_resize.py -h to read script usage.")
     return True
 
 

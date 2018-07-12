@@ -93,10 +93,10 @@ def get_sides_size(
             raise ValueError("The scale value {} is invalid!\n"
                              "The height or width, couldn't be less"
                              " {} and larger then {}!".format(
-              scale,
-              MIN_SIZE_VALUE,
-              MAX_SIZE_VALUE
-              ))
+                                scale,
+                                MIN_SIZE_VALUE,
+                                MAX_SIZE_VALUE
+                             ))
     else:
         return False
     return sides_size
