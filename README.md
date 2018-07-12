@@ -61,20 +61,17 @@ If everything is fine, you'll see such output:<br/><br/>
 
 **The script will not run in the cases below:**
 
-- In case of wrong directory or invalid image file, you'll see error messages:<br/>
+- In case of wrong directory or invalid image file, you'll see error messages:
 ```You don't have permission to save into the '/' directory```
-<br/>
-or <br/>
-```The source image file /home/nicko/devman/12_image_resize/batman.txt is invalid image file!```<br/>
-- In case of bad scale value you'll see this error message:<br/><br/>
-``` The scale value 29.0 is invalid!```<br/>
+  or 
+```The source image file /home/nicko/devman/12_image_resize/batman.txt is invalid image file!```
+- In case of bad scale value you'll see this error message:
+``` The scale value 29.0 is invalid!```
 ```The height or width, couldn't be less 1 and larger then 16383!```
-
-- If you didn't specify any optional argumets, you'll see error-message:<br/><br/>
+- If you didn't specify any optional argumets, you'll see error-message:
 ```You didn't specify any optional parameter!```
 ```Run /home/nicko/devman/12_image_resize/image_resize.py -h to read script usage.```
-
-- The script doesn't allow to specify scale with height or width:<br/>
+- The script doesn't allow to specify scale with height or width:
 ```You can not specify scale with height or width the same time! ```
 # Project Goals
 
