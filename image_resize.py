@@ -90,7 +90,13 @@ def get_sides_size(
                             (original_width, original_height)])
         if any(size not in range(MIN_SIZE_VALUE, MAX_SIZE_VALUE)
                for size in sides_size):
-            raise ValueError
+            raise ValueError("The scale value {} is invalid!\n"
+                             "The height or width, couldn't be less"
+                             " {} and larger then {}!".format(
+              scale,
+              MIN_SIZE_VALUE,
+              MAX_SIZE_VALUE
+              ))
     else:
         return False
     return sides_size
@@ -149,13 +155,6 @@ if __name__ == "__main__":
     except IOError:
         exit("The source image file {} "
              "is invalid image file!".format(path_to_source_image))
-    except ValueError:
-        exit("The scale value {} is invalid!\nThe height or width,"
-             " couldn't be less {} and larger then {}!".format(
-              scale,
-              MIN_SIZE_VALUE,
-              MAX_SIZE_VALUE
-              ))
-    except SyntaxError as error:
+    except ValueError as error:
         ext_msg = error.args[0]
         exit(ext_msg)
