@@ -5,7 +5,7 @@ Module ```image_resize.py``` contains the following functions:
 
 - ```check_image_file_exists()```
 - ```check_output_path()```
-- ```check_positive()```
+- ```check_sizes_args()```
 - ```close_image()```
 - ```get_args()```
 - ```get_output_file_path()```
@@ -59,12 +59,24 @@ source <path_to_virtualenv>/bin/activate
 If everything is fine, you'll see such output:<br/><br/>
 ```Ok! The new file - '/home/nicko/devman//profit__170x170.png'!```
 
-In case of wrong directory or invalid image file, you'll see error messages:<br/>
+**The script will not run in the cases below:**
 
-```You don't have permission to save into the '/' directory```<br/>
+- In case of wrong directory or invalid image file, you'll see error messages:<br/>
+&nbsp;```You don't have permission to save into the '/' directory```
+<br/>
 or <br/>
-```The source image file is invalid!```
+```The source image file /home/nicko/devman/12_image_resize/batman.txt is invalid image file!```<br/>
+- In case of bad scale value you'll see this error message:<br/><br/>
+``` The scale value 29.0 is invalid!```<br/>
+```The height or width, couldn't be less 1 and larger then 16383!```
 
+- If you didn't specify any optional argumets, you'll see error-message:
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```You didn't specify any optional parameter!```<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;```Run /home/nicko/devman/12_image_resize/image_resize.py -h to read script usage.```
+
+- The script doesn't allow to specify scale with height or width:<br/>
+```You can not specify scale with height or width the same time! ```
 # Project Goals
 
 The code is written for educational purposes. Training course for web-developers - [DEVMAN.org](https://devman.org)
