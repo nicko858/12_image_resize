@@ -1,19 +1,22 @@
 # Image Resizer
 
-The program is represented by the module ```image_resize.py```.
+The program is represented by the modules ```image_resize.py, validate.py```.
 Module ```image_resize.py``` contains the following functions:
 
-- ```check_image_file_exists()```
-- ```check_output_path()```
-- ```check_sizes_args()```
 - ```close_image()```
 - ```get_args()```
 - ```get_output_file_path()```
 - ```get_sides_size()```
-- ```make_args_for_resize()```
 - ```open_image()```
+- ```make_args_for_resize()```
 - ```resize_image()```
 - ```save_resize_image()```
+
+Module ```validate.py``` contains the following:
+
+- ```check_image_file_exists()```
+- ```check_output_path()```
+- ```check_sizes_args()```
 - ```validate_optional_args()```
 
 **The program uses these standart and third-party libraries:**
