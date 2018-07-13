@@ -8,7 +8,6 @@ Module ```image_resize.py``` contains the following functions:
 - ```get_output_file_path()```
 - ```get_sides_size()```
 - ```open_image()```
-- ```make_args_for_resize()```
 - ```resize_image()```
 - ```save_resize_image()```
 
@@ -17,6 +16,7 @@ Module ```validate.py``` contains the following:
 - ```check_image_file_exists()```
 - ```check_output_path()```
 - ```check_sizes_args()```
+- ```check_scale_arg()```
 - ```validate_optional_args()```
 
 **The program uses these standart and third-party libraries:**
@@ -69,11 +69,12 @@ If everything is fine, you'll see such output:<br/><br/>
   or 
 ```The source image file /home/nicko/devman/12_image_resize/batman.txt is invalid image file!```
 - In case of bad scale value you'll see this error message:
-``` The scale value 29.0 is invalid!```
-```The height or width, couldn't be less 1 and larger then 16383!```
+``` image_resize.py: error: argument -scale: argument must be a positive!```
+- In case of bad width or height value you'll see this error message:
+``` image_resize.py: error: argument -height: argument must be a positive!```
 - If you didn't specify any optional argumets, you'll see error-message:
 ```You didn't specify any optional parameter!```
-```Run /home/nicko/devman/12_image_resize/image_resize.py -h to read script usage.```
+```Run image_resize.py -h to read script usage.```
 - The script doesn't allow to specify scale with height or width:
 ```You can not specify scale with height or width the same time! ```
 # Project Goals

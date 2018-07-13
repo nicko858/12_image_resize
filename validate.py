@@ -2,10 +2,6 @@ from argparse import ArgumentTypeError
 from os.path import exists, isfile, isdir
 
 
-MIN_SIZE_VALUE = 1
-MAX_SIZE_VALUE = 16383
-
-
 def check_image_file_exists(path_to_source_file):
     if not exists(path_to_source_file):
         msg_exist = ("No such file or directory"
@@ -19,12 +15,15 @@ def check_image_file_exists(path_to_source_file):
 
 
 def check_sizes_args(arg):
-    if int(arg) not in range(MIN_SIZE_VALUE, MAX_SIZE_VALUE):
-        raise ArgumentTypeError("argument must be in range({}, {})".format(
-            MIN_SIZE_VALUE,
-            MAX_SIZE_VALUE
-        ))
+    if int(arg) <= 0:
+        raise ArgumentTypeError("argument must be a positive!")
     return int(arg)
+
+
+def check_scale_arg(arg):
+    if float(arg) <= 0:
+        raise ArgumentTypeError("argument must be a positive!")
+    return float(arg)
 
 
 def validate_optional_args(width=None, height=None, scale=None):
@@ -32,9 +31,6 @@ def validate_optional_args(width=None, height=None, scale=None):
         if width or height:
             raise ValueError("You can not specify scale with "
                              "height or width the same time! ")
-    elif width and height:
-        print("You have specified width and height."
-              "The aspect ratio will be changed!")
     if not width and not height and not scale:
         raise ValueError("You didn't specify "
                          "any optional parameter!\n"
