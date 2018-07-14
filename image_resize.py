@@ -1,9 +1,10 @@
 from PIL import Image
 import argparse
+from argparse import ArgumentTypeError
 from os.path import join, basename, splitext, dirname
 from validate import (check_image_file_exists, check_sizes_args,
                       check_scale_arg, validate_optional_args,
-                      check_output_path)
+                      check_output_path, check_sizes_ratio)
 
 
 def get_args():
@@ -14,7 +15,6 @@ def get_args():
         "path_to_source_image",
         type=check_image_file_exists
     )
-
     parser.add_argument(
         "-width",
         type=check_sizes_args,
@@ -45,10 +45,6 @@ def open_image(path_to_source_image):
     return image
 
 
-def get_image_size(image):
-    return image.size
-
-
 def close_image(image):
     image.close()
 
@@ -74,16 +70,14 @@ def calculate_sides_size(
     height=None,
     scale=None
 ):
-    user_message = "The aspect ratio will be changed!"
     original_width, original_height = original_sides_size
     if width and height:
         sides_size = (width, height)
+        check_sizes_ratio(original_sides_size, sides_size)
     elif width:
-        print(user_message)
         height = int(original_height / (original_width / width))
         sides_size = (width, height)
     elif height:
-        print(user_message)
         width = int(original_width / (original_height / height))
         sides_size = (width, height)
     elif scale:
@@ -114,7 +108,7 @@ if __name__ == "__main__":
     try:
         validate_args = validate_optional_args(width, height, scale)
         original_image = open_image(path_to_source_image)
-        original_sides_size = get_image_size(original_image)
+        original_sides_size = original_image.size
         new_sides_size = calculate_sides_size(
             original_sides_size,
             width,
@@ -136,6 +130,6 @@ if __name__ == "__main__":
     except IOError:
         exit("The source image file {} "
              "is invalid image file!".format(path_to_source_image))
-    except ValueError as error:
+    except ArgumentTypeError as error:
         ext_msg = error.args[0]
         exit(ext_msg)

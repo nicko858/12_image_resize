@@ -1,4 +1,4 @@
-from argparse import ArgumentTypeError
+from argparse import ArgumentTypeError, ArgumentError
 from os.path import exists, isfile, isdir
 
 
@@ -26,15 +26,24 @@ def check_scale_arg(arg):
     return float(arg)
 
 
+def check_sizes_ratio(original_size, new_size):
+    original_width, original_height = original_size
+    new_width, new_height = new_size
+    if original_width/original_height != new_width/new_height:
+        print("The aspect ratio will be changed!")
+
+
 def validate_optional_args(width=None, height=None, scale=None):
     if scale is not None:
         if width or height:
-            raise ValueError("You can not specify scale with "
-                             "height or width the same time! ")
+            raise ArgumentTypeError("You can not specify scale with "
+                                    "height or width the same time! ")
     if not width and not height and not scale:
-        raise ValueError("You didn't specify "
-                         "any optional parameter!\n"
-                         "Run image_resize.py -h to read script usage.")
+        raise ArgumentTypeError(
+            "You didn't specify "
+            "any optional parameter!\n"
+            "Run image_resize.py -h to read script usage."
+        )
     return True
 
 
