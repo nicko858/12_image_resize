@@ -30,7 +30,8 @@ def check_sizes_ratio(original_size, new_size):
     original_width, original_height = original_size
     new_width, new_height = new_size
     if original_width/original_height != new_width/new_height:
-        print("The aspect ratio will be changed!")
+        return False
+    return True
 
 
 def validate_optional_args(width=None, height=None, scale=None):

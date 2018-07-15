@@ -73,7 +73,6 @@ def calculate_sides_size(
     original_width, original_height = original_sides_size
     if width and height:
         sides_size = (width, height)
-        check_sizes_ratio(original_sides_size, sides_size)
     elif width:
         height = int(original_height / (original_width / width))
         sides_size = (width, height)
@@ -93,7 +92,7 @@ def resize_image(image, sides_size):
     return resized_image
 
 
-def save_resize_image(image, output):
+def save_resized_image(image, output):
     image.save(output)
     return output
 
@@ -115,13 +114,15 @@ if __name__ == "__main__":
             height,
             scale
         )
+        if not check_sizes_ratio(original_sides_size, new_sides_size):
+            print("The aspect ratio will be changed!")
         path_to_resize = get_output_file_path(
             path_to_source_image,
             new_sides_size,
             output
         )
         new_image = resize_image(original_image, new_sides_size)
-        save_resize_image(new_image, path_to_resize)
+        save_resized_image(new_image, path_to_resize)
         close_image(original_image)
         print("Ok! The new file - '{}'".format(path_to_resize))
     except PermissionError:
