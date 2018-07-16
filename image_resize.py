@@ -128,9 +128,6 @@ if __name__ == "__main__":
     except PermissionError:
         exit("You don't have permission to save into the"
              " '{}' directory".format(output))
-    except IOError:
-        exit("The source image file {} "
-             "is invalid image file!".format(path_to_source_image))
     except ArgumentTypeError as error:
         ext_msg = error.args[0]
         exit(ext_msg)
