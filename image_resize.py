@@ -114,8 +114,8 @@ if __name__ == "__main__":
             height,
             scale
         )
-        if not check_sizes_ratio(original_sides_size, new_sides_size):
-            print("The aspect ratio will be changed!")
+        if width and height:
+            print(check_sizes_ratio(original_sides_size, new_sides_size))
         path_to_resize = get_output_file_path(
             path_to_source_image,
             new_sides_size,
