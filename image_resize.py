@@ -2,7 +2,7 @@ from PIL import Image
 import argparse
 from argparse import ArgumentTypeError
 from os.path import join, basename, splitext, dirname
-from validate import (check_image_file_exists, check_sizes_args,
+from validate import (check_image_file, check_sizes_args,
                       check_scale_arg, validate_optional_args,
                       check_output_path, check_sizes_ratio)
 
@@ -13,7 +13,7 @@ def get_args():
     )
     parser.add_argument(
         "path_to_source_image",
-        type=check_image_file_exists
+        type=check_image_file
     )
     parser.add_argument(
         "-width",

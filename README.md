@@ -19,6 +19,7 @@ Module ```validate.py``` contains the following:
 - ```check_scale_arg()```
 - ```check_sizes_ratio()```
 - ```check_file_extension()```
+- ```check_file_consistent()```
 - ```validate_optional_args()```
 
 **The program uses these standart and third-party libraries:**

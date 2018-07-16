@@ -1,8 +1,9 @@
 from argparse import ArgumentTypeError
 from os.path import exists, isfile, isdir, splitext
+from PIL import Image
 
 
-def check_image_file_exists(path_to_source_file):
+def check_image_file(path_to_source_file):
     if not exists(path_to_source_file):
         msg_exist = ("No such file or directory"
                      " - '{}' !".format(path_to_source_file))
@@ -11,19 +12,30 @@ def check_image_file_exists(path_to_source_file):
         msg_isdir = "'{}' is not a file".format(path_to_source_file)
         raise ArgumentTypeError(msg_isdir)
     elif not check_file_extension((".jpg", ".png"), path_to_source_file):
-        raise ArgumentTypeError("The source image file {} is invalid!"
+        raise ArgumentTypeError("The source image file {} is invalid!\n"
                                 "The valid file extensions are {}".format(
                                  path_to_source_file,
                                  (".jpg", ".png")))
+    elif not check_file_consistent(path_to_source_file):
+        raise ArgumentTypeError("The source image file {} "
+                                "is invalid".format(path_to_source_file))
     else:
         return path_to_source_file
 
 
-def check_file_extension(extensions, file_name):
-    file_name, file_extension = splitext(file_name)
+def check_file_extension(extensions, path_to_source_file):
+    file_name, file_extension = splitext(path_to_source_file)
     if file_extension not in extensions:
         return False
     return True
+
+
+def check_file_consistent(path_to_source_file):
+    try:
+        with Image.open(path_to_source_file):
+            return True
+    except OSError:
+        return False
 
 
 def check_sizes_args(arg):
