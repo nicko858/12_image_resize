@@ -8,6 +8,7 @@ Module ```image_resize.py``` contains the following functions:
 - ```get_output_file_path()```
 - ```get_sides_size()```
 - ```open_image()```
+- ```parse_args()```
 - ```resize_image()```
 - ```save_resize_image()```
 

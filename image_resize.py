@@ -97,13 +97,22 @@ def save_resized_image(image, output):
     return output
 
 
-if __name__ == "__main__":
+def parse_args():
     args = get_args()
     path_to_source_image = args.path_to_source_image
     width = args.width
     height = args.height
     scale = args.scale
     output = args.output
+    return path_to_source_image, width, height, scale, output
+
+
+if __name__ == "__main__":
+    (path_to_source_image,
+     width,
+     height,
+     scale,
+     output) = parse_args()
     try:
         validate_args = validate_optional_args(width, height, scale)
         original_image = open_image(path_to_source_image)
@@ -115,7 +124,8 @@ if __name__ == "__main__":
             scale
         )
         if width and height:
-            print(check_sizes_ratio(original_sides_size, new_sides_size))
+            if not check_sizes_ratio(original_sides_size, new_sides_size):
+                print("The aspect ratio will be changed!")
         path_to_resize = get_output_file_path(
             path_to_source_image,
             new_sides_size,
