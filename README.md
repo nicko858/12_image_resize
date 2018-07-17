@@ -10,6 +10,8 @@ Module ```image_resize.py``` contains the following functions:
 - ```open_image()```
 - ```parse_args()```
 - ```resize_image()```
+- ```get_original_image_params()```
+- ```get_new_image_params()```
 - ```save_resize_image()```
 
 Module ```validate.py``` contains the following:

@@ -107,6 +107,27 @@ def parse_args():
     return path_to_source_image, width, height, scale, output
 
 
+def get_original_image_params(path_to_source_image):
+    original_image = open_image(path_to_source_image)
+    original_sides_size = original_image.size
+    return original_image, original_sides_size
+
+
+def get_new_image_params(original_sides_size, width, height, scale):
+    new_sides_size = calculate_sides_size(
+        original_sides_size,
+        width,
+        height,
+        scale
+    )
+    path_to_resize = get_output_file_path(
+        path_to_source_image,
+        new_sides_size,
+        output
+    )
+    return new_sides_size, path_to_resize
+
+
 if __name__ == "__main__":
     (path_to_source_image,
      width,
@@ -115,9 +136,9 @@ if __name__ == "__main__":
      output) = parse_args()
     try:
         validate_args = validate_optional_args(width, height, scale)
-        original_image = open_image(path_to_source_image)
-        original_sides_size = original_image.size
-        new_sides_size = calculate_sides_size(
+        (original_image,
+         original_sides_size)  = get_original_image_params(path_to_source_image)
+        new_sides_size, path_to_resize = get_new_image_params(
             original_sides_size,
             width,
             height,
@@ -126,11 +147,6 @@ if __name__ == "__main__":
         if width and height:
             if not check_sizes_ratio(original_sides_size, new_sides_size):
                 print("The aspect ratio will be changed!")
-        path_to_resize = get_output_file_path(
-            path_to_source_image,
-            new_sides_size,
-            output
-        )
         new_image = resize_image(original_image, new_sides_size)
         save_resized_image(new_image, path_to_resize)
         close_image(original_image)
