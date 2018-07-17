@@ -13,6 +13,7 @@ Module ```image_resize.py``` contains the following functions:
 - ```get_original_image_params()```
 - ```get_new_image_params()```
 - ```save_resize_image()```
+- ```main()```
 
 Module ```validate.py``` contains the following:
 

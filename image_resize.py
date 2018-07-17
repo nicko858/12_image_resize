@@ -113,7 +113,14 @@ def get_original_image_params(path_to_source_image):
     return original_image, original_sides_size
 
 
-def get_new_image_params(original_sides_size, width, height, scale):
+def get_new_image_params(
+    original_sides_size,
+    path_to_source_image,
+    output,
+    width,
+    height,
+    scale
+):
     new_sides_size = calculate_sides_size(
         original_sides_size,
         width,
@@ -128,32 +135,39 @@ def get_new_image_params(original_sides_size, width, height, scale):
     return new_sides_size, path_to_resize
 
 
-if __name__ == "__main__":
+def main():
     (path_to_source_image,
      width,
      height,
      scale,
      output) = parse_args()
+    validate_optional_args(width, height, scale)
+    (original_image,
+     original_sides_size) = get_original_image_params(path_to_source_image)
+    new_sides_size, path_to_resize = get_new_image_params(
+       original_sides_size,
+       path_to_source_image,
+       output,
+       width,
+       height,
+       scale
+    )
+    if width and height:
+        if not check_sizes_ratio(original_sides_size, new_sides_size):
+            print("The aspect ratio will be changed!")
+    new_image = resize_image(original_image, new_sides_size)
+    save_resized_image(new_image, path_to_resize)
+    close_image(original_image)
+    print("Ok! The new file - '{}'".format(path_to_resize))
+
+
+if __name__ == "__main__":
     try:
-        validate_args = validate_optional_args(width, height, scale)
-        (original_image,
-         original_sides_size)  = get_original_image_params(path_to_source_image)
-        new_sides_size, path_to_resize = get_new_image_params(
-            original_sides_size,
-            width,
-            height,
-            scale
-        )
-        if width and height:
-            if not check_sizes_ratio(original_sides_size, new_sides_size):
-                print("The aspect ratio will be changed!")
-        new_image = resize_image(original_image, new_sides_size)
-        save_resized_image(new_image, path_to_resize)
-        close_image(original_image)
-        print("Ok! The new file - '{}'".format(path_to_resize))
-    except PermissionError:
-        exit("You don't have permission to save into the"
-             " '{}' directory".format(output))
+        main()
     except ArgumentTypeError as error:
-        ext_msg = error.args[0]
-        exit(ext_msg)
+        ext_msg = error.args
+        exit(ext_msg[0])
+    except PermissionError as error:
+        exit("You don't have permission to save into the"
+             " '{}'".format(error.filename))
+
