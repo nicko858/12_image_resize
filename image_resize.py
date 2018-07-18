@@ -148,7 +148,8 @@ if __name__ == "__main__":
          scale,
          output) = parse_args()
         (original_image,
-         original_sides_size) = get_original_image_params(path_to_source_image)
+         original_sides_size) = get_original_image_params(
+            path_to_source_image)
         new_sides_size, path_to_resize = get_new_image_params(
             original_sides_size,
             path_to_source_image,
