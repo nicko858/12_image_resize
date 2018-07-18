@@ -47,35 +47,36 @@ def check_scale_arg(arg):
     return float(arg)
 
 
-def is_check_sizes_ratio_change(original_size, new_size):
+def is_sizes_ratio_changed(original_size, new_size):
     original_width, original_height = original_size
     new_width, new_height = new_size
     return original_width/original_height != new_width/new_height
 
 
-def validate_optional_args(args):
+def validate_optional_args(parser):
+    args = parser.parse_args()
     if args.scale is not None:
         if args.width or args.height:
-            return("You can not specify scale with "
-                   "height or width the same time! ")
+            parser.error("You can not specify scale with "
+                         "height or width the same time! ")
     if not args.width and not args.height and not args.scale:
-        return("You didn't specify "
-               "any optional parameter!\n"
-               "Run image_resize.py -h to read script usage."
-               )
+        parser.error(
+            "You didn't specify "
+            "any optional parameter!\n"
+            "Run image_resize.py -h to read script usage."
+            )
     return True
 
 
-def check_output_path(output):
-    output_dir = output
-    if not exists(output_dir):
+def check_output_path(arg):
+    if not exists(arg):
         msg_exist = ("No such file or directory - "
-                     "'{}' !".format(output_dir))
+                     "'{}' !".format(arg))
         raise ArgumentTypeError(msg_exist)
-    elif not isdir(output_dir):
-        msg_isdir = "'{}' is not a directory".format(output_dir)
+    elif not isdir(arg):
+        msg_isdir = "'{}' is not a directory".format(arg)
         raise ArgumentTypeError(msg_isdir)
-    return output
+    return arg.output
 
 
 if __name__ == "__main__":
