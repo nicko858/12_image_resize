@@ -21,7 +21,7 @@ Module ```validate.py``` contains the following:
 - ```check_output_path()```
 - ```check_sizes_args()```
 - ```check_scale_arg()```
-- ```check_sizes_ratio()```
+- ```is_check_sizes_ratio_change()```
 - ```check_file_extension()```
 - ```check_file_consistent()```
 - ```validate_optional_args()```

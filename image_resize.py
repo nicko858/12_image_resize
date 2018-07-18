@@ -4,7 +4,7 @@ from argparse import ArgumentTypeError
 from os.path import join, basename, splitext, dirname
 from validate import (check_image_file, check_sizes_args,
                       check_scale_arg, validate_optional_args,
-                      check_output_path, check_sizes_ratio)
+                      check_output_path, is_check_sizes_ratio_change)
 
 
 def get_args():
@@ -35,8 +35,10 @@ def get_args():
         type=check_output_path,
         metavar="specify the path where to save resized image"
     )
-
     args = parser.parse_args()
+    parser_valid = validate_optional_args(args)
+    if parser_valid is not True:
+        parser.error(parser_valid)
     return args
 
 
@@ -93,7 +95,10 @@ def resize_image(image, sides_size):
 
 
 def save_resized_image(image, output):
-    image.save(output)
+    try:
+        image.save(output)
+    except PermissionError:
+        return None
     return output
 
 
@@ -135,39 +140,35 @@ def get_new_image_params(
     return new_sides_size, path_to_resize
 
 
-def main():
-    (path_to_source_image,
-     width,
-     height,
-     scale,
-     output) = parse_args()
-    validate_optional_args(width, height, scale)
-    (original_image,
-     original_sides_size) = get_original_image_params(path_to_source_image)
-    new_sides_size, path_to_resize = get_new_image_params(
-       original_sides_size,
-       path_to_source_image,
-       output,
-       width,
-       height,
-       scale
-    )
-    if width and height:
-        if not check_sizes_ratio(original_sides_size, new_sides_size):
-            print("The aspect ratio will be changed!")
-    new_image = resize_image(original_image, new_sides_size)
-    save_resized_image(new_image, path_to_resize)
-    close_image(original_image)
-    print("Ok! The new file - '{}'".format(path_to_resize))
-
-
 if __name__ == "__main__":
     try:
-        main()
+        (path_to_source_image,
+         width,
+         height,
+         scale,
+         output) = parse_args()
+        (original_image,
+         original_sides_size) = get_original_image_params(path_to_source_image)
+        new_sides_size, path_to_resize = get_new_image_params(
+            original_sides_size,
+            path_to_source_image,
+            output,
+            width,
+            height,
+            scale
+        )
+        if width and height:
+            if is_check_sizes_ratio_change(
+                    original_sides_size,
+                    new_sides_size
+            ):
+                print("The aspect ratio will be changed!")
+        new_image = resize_image(original_image, new_sides_size)
+        if not save_resized_image(new_image, path_to_resize):
+            exit("You don't have permission to save into the"
+                 " '{}' directory!".format(output))
+        close_image(original_image)
+        print("Ok! The new file - '{}'".format(path_to_resize))
     except ArgumentTypeError as error:
         ext_msg = error.args
         exit(ext_msg[0])
-    except PermissionError as error:
-        exit("You don't have permission to save into the"
-             " '{}'".format(error.filename))
-
